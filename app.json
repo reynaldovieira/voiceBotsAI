@@ -1,29 +1,33 @@
 {
   "expo": {
-    "name": "voiceBotsAI",
-    "slug": "voiceBotsAI",
+    "name": "voicebotsai",
+    "slug": "voicebotsai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "voiceBotsAI",
+    "scheme": "voicebotsai",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "ignoreNodeModulesValidation": ["#current-cloud-backend"]
+    },
     "assetBundlePatterns": ["**/*"],
-    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "jsEngine": "hermes",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.voiceBotsAI"
+      "permissions": ["RECORD_AUDIO", "android.permission.RECORD_AUDIO"],
+      "blockedPermissions": [],
+      "package": "com.voicebotsai"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,7 +35,7 @@
     "plugins": ["@react-native-voice/voice"],
     "extra": {
       "eas": {
-        "projectId": "146c90bd-1274-4885-a416-bac98271e36b"
+        "projectId": "5896acb7-11d8-45f0-a509-89453ad0cf21"
       }
     }
   }

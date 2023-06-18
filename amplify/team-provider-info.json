@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-speakmate-dev-112245-authRole",
+      "UnauthRoleArn": "arn:aws:iam::201264677579:role/amplify-speakmate-dev-112245-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::201264677579:role/amplify-speakmate-dev-112245-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-speakmate-dev-112245-deployment",
+      "UnauthRoleName": "amplify-speakmate-dev-112245-unauthRole",
+      "StackName": "amplify-speakmate-dev-112245",
+      "StackId": "arn:aws:cloudformation:us-east-1:201264677579:stack/amplify-speakmate-dev-112245/99c759a0-0de3-11ee-8108-0a0e41f571b9",
+      "AmplifyAppId": "d2g9qz54qn7xce"
+    },
+    "categories": {
+      "auth": {
+        "speakmateea36137c": {}
+      }
+    }
+  }
+}

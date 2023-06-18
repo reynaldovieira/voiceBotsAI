@@ -27,6 +27,9 @@ type State = {
   finalResult: string;
   messages: any[];
   stopped: boolean;
+  message: string;
+  interrupt: boolean;
+  makingAnswers: string[];
 };
 
 class VoiceTest extends Component<Props, State> {
@@ -42,11 +45,12 @@ class VoiceTest extends Component<Props, State> {
     finalResult: "",
     messages: [],
     stopped: false,
+    message: "",
+    interrupt: false,
   };
 
   constructor(props: Props) {
     super(props);
-    Tts.setDefaultLanguage("es-ES");
     Voice.onSpeechStart = this.onSpeechStart;
     Voice.onSpeechRecognized = this.onSpeechRecognized;
     Voice.onSpeechEnd = this.onSpeechEnd;
@@ -55,9 +59,11 @@ class VoiceTest extends Component<Props, State> {
     Voice.onSpeechPartialResults = this.onSpeechPartialResults;
     // Voice.onSpeechVolumeChanged = this.onSpeechVolumeChanged;
   }
-  // componentDidMount() {
-  //   this._firstMessage();
-  // }
+  componentDidMount() {
+    Tts.setDefaultLanguage("es-ES");
+    Tts.setDefaultRate(0.5);
+    // Tts.voices().then((voices) => console.log(voices));
+  }
 
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
@@ -99,11 +105,12 @@ class VoiceTest extends Component<Props, State> {
   };
 
   onSpeechResults = async (e: SpeechResultsEvent) => {
+    if (this.state.interrupt) return;
+    // if (this.state.interrupt) return;
     console.log("onSpeechResults: ", e.value[0]);
     this.state.makingAnswers.push(e.value[0]);
-    console.log(this.state.makingAnswers);
 
-    await Voice.stop();
+    await Voice.cancel();
     await Voice.start("es-ES");
     this.setState({
       results: e.value,
@@ -139,6 +146,8 @@ class VoiceTest extends Component<Props, State> {
       partialResults: [],
       end: "",
       finalResult: "",
+      message: "",
+      // interrupt: false,
     });
 
     try {
@@ -156,13 +165,11 @@ class VoiceTest extends Component<Props, State> {
 
   _stopRecognizing = async () => {
     // crie um intervalo de 100 centésimos antes de continuar o código para evitar que o reconhecimento de voz seja interrompido
-
+    // if (this.state.interrupt) return;
     try {
       // adicione um intervalo de 100 centésimos
-      setTimeout(async () => {
-        await Voice.stop();
-        this._sendMessage();
-      }, 500);
+      await Voice.stop();
+      this._sendMessage();
     } catch (e) {
       console.error(e);
     }
@@ -181,15 +188,18 @@ class VoiceTest extends Component<Props, State> {
       partialResults: [],
       end: "",
       finalResult: "",
+      message: "",
     });
 
     if (this.state.makingAnswers.length > 0) {
-      console.log(this.state.makingAnswers.join(" "));
       const messages = [
         {
           role: "user",
-          content:
-            "Prompt: (Interpreta a una argentina llamada Sofía. Le gusta bailar tango, pintar cuadros y ver películas de drama, tanto nacionales como internacionales. No me corrige errores de ortografía o puntuación, pero si nota algún error de español que involucre conjugaciones verbales o errores graves de pronombres y adverbios, ¡me corregirá! Importante: No comentará nada sobre lo que acabo de describir ahora entre paréntesis).",
+          content: "(never complete my sentences!)",
+        },
+        {
+          role: "assistant",
+          content: "Comprendido. Nunca completaré tus frases.",
         },
         ...this.state.messages, // Adicionar mensagens anteriores
         {
@@ -197,19 +207,20 @@ class VoiceTest extends Component<Props, State> {
           content: this.state.makingAnswers.join(" "),
         },
       ];
+      console.log(this.state.makingAnswers.join(" "));
 
       try {
-        console.log("messages", messages);
+        console.log("enviando");
         const response = await axios.post(
           apiUrl,
           {
-            max_tokens: 100,
+            max_tokens: 250,
             top_p: 1,
             frequency_penalty: 0,
             presence_penalty: 0,
             model: "gpt-3.5-turbo-0301",
             messages,
-            temperature: 0.5,
+            temperature: 0.4,
           },
           {
             headers: {
@@ -219,19 +230,10 @@ class VoiceTest extends Component<Props, State> {
           }
         );
         // console.log("response", response);
-        this.state.makingAnswers = [];
         const choices = response.data?.choices?.[0]?.message?.content || false;
-        console.log(choices);
 
         // Atualizar a lista de mensagens no estado
-        this.setState((prevState) => ({
-          finalResult: choices,
-          messages: [
-            ...prevState.messages,
-            { role: "assistant", content: choices },
-          ],
-        }));
-
+        console.log("choices", choices);
         Tts.speak(choices.replaceAll("¿", "") || "Desculpe, não entendi", {
           androidParams: {
             KEY_PARAM_PAN: -1,
@@ -239,6 +241,18 @@ class VoiceTest extends Component<Props, State> {
             KEY_PARAM_STREAM: "STREAM_MUSIC",
           },
         });
+
+        this.setState((prevState) => ({
+          finalResult: choices,
+          messages: [
+            ...prevState.messages,
+            { role: "assistant", content: choices },
+          ],
+          stopped: false,
+          message: this.state.makingAnswers.join(" "),
+        }));
+        this.state.makingAnswers = [];
+
         // Resto do código...
       } catch (error) {
         console.error(error);
@@ -297,6 +311,30 @@ class VoiceTest extends Component<Props, State> {
     }
   };
 
+  _stop = async () => {
+    try {
+      await Voice.stop();
+      Tts.stop();
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.setState({
+      // interrupt: true,
+      makingAnswers: [],
+      message: "",
+      finalResult: "",
+      messages: [],
+    });
+
+    setTimeout(() => {
+      this.setState({
+        stopped: false,
+      });
+      this._stopRecognizing();
+    }, 200);
+  };
+
   _destroyRecognizer = async () => {
     try {
       await Voice.destroy();
@@ -322,15 +360,8 @@ class VoiceTest extends Component<Props, State> {
         <Text style={styles.instructions}>
           Hold the button and start speaking.
         </Text>
-        <Text
-          style={styles.stat}
-        >{`Recognized: ${this.state.recognized}`}</Text>
-        <Text style={styles.stat}>{`End: ${this.state.end}`}</Text>
-        {this.state.results.length ? (
-          <Text style={styles.stat}>{this.state.results[0]}</Text>
-        ) : (
-          <></>
-        )}
+        <Text style={styles.stat}>{`Mensagem: ${this.state.message}`}</Text>
+        <Text>{`Resposta: ${this.state.finalResult}`}</Text>
         {/* <Text style={styles.stat}>{`Started: ${this.state.started}`}</Text>
 
         <Text style={styles.stat}>{`Pitch: ${this.state.pitch}`}</Text>
@@ -360,6 +391,9 @@ class VoiceTest extends Component<Props, State> {
             style={styles.button}
             source={require("../assets/button.png")}
           />
+        </TouchableHighlight>
+        <TouchableHighlight onPress={this._stop}>
+          <Image style={styles.button} source={require("../assets/stop.png")} />
         </TouchableHighlight>
         {/* <TouchableHighlight onPress={this._stopRecognizing}>
           <Text style={styles.action}>Stop Recognizing</Text>
