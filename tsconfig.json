@@ -9,9 +9,5 @@
     "esModuleInterop": true,
     "baseUrl": "."
   },
-  "exclude": [
-    "node_modules",
-    ".git"
-  ],
-  "extends": "expo/tsconfig.base"
+  "exclude": ["node_modules", ".git"]
 }
