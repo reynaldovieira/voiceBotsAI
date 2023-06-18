@@ -1,17 +1,13 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "speakmateea36137c_identitypool_ea36137c",
+    "identityPoolName": "voicebotsai3b8cada5_identitypool_3b8cada5",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "speakmea36137c",
-    "userPoolName": "speakmateea36137c_userpool_ea36137c",
-    "autoVerifiedAttributes": [
-      "email"
-    ],
+    "resourceNameTruncated": "voiceb3b8cada5",
+    "userPoolName": "voicebotsai3b8cada5_userpool_3b8cada5",
+    "autoVerifiedAttributes": ["email"],
     "mfaConfiguration": "OFF",
-    "mfaTypes": [
-      "SMS Text Message"
-    ],
+    "mfaTypes": ["SMS Text Message"],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
     "emailVerificationSubject": "Your verification code",
@@ -19,50 +15,33 @@
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
-    "requiredAttributes": [
-      "email"
-    ],
+    "requiredAttributes": ["email"],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
-    "userpoolClientWriteAttributes": [
-      "email"
-    ],
-    "userpoolClientReadAttributes": [
-      "email"
-    ],
-    "userpoolClientLambdaRole": "speakmea36137c_userpoolclient_lambda_role",
+    "userpoolClientWriteAttributes": ["email"],
+    "userpoolClientReadAttributes": ["email"],
+    "userpoolClientLambdaRole": "voiceb3b8cada5_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "ea36137c",
-    "resourceName": "speakmateea36137c",
+    "sharedId": "3b8cada5",
+    "resourceName": "voicebotsai3b8cada5",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "usernameAttributes": [
-      "email"
-    ],
+    "usernameAttributes": ["email"],
     "triggers": {},
-    "hostedUIDomainName": "speakmateea36137c-ea36137c",
-    "authProvidersUserPool": [
-      "Facebook",
-      "Google"
-    ],
+    "hostedUIDomainName": "voicebotsai3b8cada5-3b8cada5",
+    "authProvidersUserPool": ["Facebook", "Google"],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"id\"}},{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
     "useEnabledMfas": true,
     "authRoleArn": {
-      "Fn::GetAtt": [
-        "AuthRole",
-        "Arn"
-      ]
+      "Fn::GetAtt": ["AuthRole", "Arn"]
     },
     "unauthRoleArn": {
-      "Fn::GetAtt": [
-        "UnauthRole",
-        "Arn"
-      ]
+      "Fn::GetAtt": ["UnauthRole", "Arn"]
     },
     "breakCircularDependency": true,
     "dependsOn": [],
@@ -70,6 +49,6 @@
       "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:19006/\",\"https://speakmateea36137c-ea36137c-dev.auth.us-east-1.amazoncognito.com/oauth/idpresponse/\"],\"LogoutURLs\":[\"http://localhost:19006/\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:8081/home/\"],\"LogoutURLs\":[\"http://localhost:19006/logout\"]}"
   }
 }
